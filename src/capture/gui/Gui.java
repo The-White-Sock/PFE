@@ -319,12 +319,12 @@ public class Gui extends JFrame implements ActionListener{
 		
 		else if (e.getSource() == btnLaunch) {
 			directory = tfDirectory.getText();
-			interSnap = (int) spInterSnap.getValue();
-			durTot = (int) spDuTotH.getValue() * 3600 + (int) spDurTotM.getValue() * 60 + (int) spDurTotS.getValue();
-			jpgQuality = (int) spJPGQuality.getValue();
-			interVid = (int) spInterVidH.getValue() * 3600 + (int) spInterVidM.getValue() * 60 + (int) spInterVidS.getValue();
-			durCapt = (int) spDurCaptH.getValue() * 3600 + (int) spDurCaptM.getValue() * 60 + (int) spDurCaptS.getValue();
-			durVid = (int) spDurVidM.getValue() * 60 + (int) spDurVidS.getValue();
+			interSnap = (Integer) spInterSnap.getValue();
+			durTot = (Integer) spDuTotH.getValue() * 3600 + (Integer) spDurTotM.getValue() * 60 + (Integer) spDurTotS.getValue();
+			jpgQuality = (Integer) spJPGQuality.getValue();
+			interVid = (Integer) spInterVidH.getValue() * 3600 + (Integer) spInterVidM.getValue() * 60 + (Integer) spInterVidS.getValue();
+			durCapt = (Integer) spDurCaptH.getValue() * 3600 + (Integer) spDurCaptM.getValue() * 60 + (Integer) spDurCaptS.getValue();
+			durVid = (Integer) spDurVidM.getValue() * 60 + (Integer) spDurVidS.getValue();
 			preview = chckbxPreview.isSelected();
 			
 			cmd = "autoExe " 

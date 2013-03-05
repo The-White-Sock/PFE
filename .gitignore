@@ -1,6 +1,6 @@
-Libraries/
-Binaries/
-lib/
+#Libraries/
+#Binaries/
+#lib/
 
 #################
 ## Eclipse

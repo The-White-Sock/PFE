@@ -21,27 +21,25 @@ ECHO %nbMaxVid% seront réalisées
 SET cmpt=0
 
 REM Création des dossiers de travail
-REM IF NOT EXIST "%dir%" (MKDIR "%dir%")
 IF NOT EXIST ".\Video" (MKDIR ".\Video")
 IF NOT EXIST ".\tmp.txt" (ECHO. 2>".\tmp.txt")
 IF NOT EXIST ".\list.txt" (ECHO. 2>".\list.txt")
-REM IF NOT EXIST "%dir%\mencoder.exe" (COPY mencoder.exe "%dir%\mencoder.exe")
 
 REM On lance la capture
 START autoCapture %durTot% %interval% %quality%
 ECHO Capture lancée
 
-REM TIMEOUT %durCapt%
-SET /a durCaptms=(durCapt*1000)+5
-ping 192.0.2.2 -n 1 -w %durCaptms% > nul
+TIMEOUT %durCapt%
+REM SET /a durCaptms=(durCapt*1000)+5
+REM ping 192.0.2.2 -n 1 -w %durCaptms% > nul
 
 SET /a interVidms=interVid*1000
 
 FOR /L %%G IN (0,1,%nbMaxVid%) DO (
 	START mencoderByInterval %interval% %durCapt% %durVid% %%G
 	ECHO Encodage de la vidéo %%G lancé
-	REM TIMEOUT %interVid%
-	ping 192.0.2.2 -n 1 -w %interVidms%*1000 > nul
+	TIMEOUT %interVid%
+	REM ping 192.0.2.2 -n 1 -w %interVidms%*1000 > nul
 )
 
 PAUSE

@@ -18,9 +18,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import player.gui.SuperPlayer;
 import player.gui.VlcjPlayer;
-import uk.co.caprica.vlcj.test.component.AdvancedEmbeddedMediaPlayerComponentTest;
 
 public class Config extends JFrame implements ActionListener{
 	
@@ -342,20 +340,11 @@ public class Config extends JFrame implements ActionListener{
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-//			SwingUtilities.invokeLater(new Runnable() {
-//				public void run() {
-//					try {
-//						VlcjPlayer playerFrame = new VlcjPlayer();
-//						playerFrame.setVisible(true);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			});
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
-//						new SuperPlayer().start();
+						VlcjPlayer playerFrame = new VlcjPlayer();
+						playerFrame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

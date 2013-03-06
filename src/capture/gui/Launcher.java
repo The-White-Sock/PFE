@@ -24,14 +24,15 @@ public class Launcher {
 
 	private void initialize() {
 		onWindows = System.getProperty("os.name").contains("Windows");
-		
-		if(onWindows) {
+
+		if (onWindows) {
 			System.out.println("OS = Windows");
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "C:\\Program Files (x86)\\VideoLAN\\VLC");
-		}
-		else {
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),
+					"C:\\Program Files (x86)\\VideoLAN\\VLC");
+		} else {
 			System.out.println("OS = Linux");
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "/home/linux/vlc/install/lib");
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),
+					"/home/linux/vlc/install/lib");
 		}
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
 		

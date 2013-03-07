@@ -1,5 +1,6 @@
 package capture.gui;
 
+import player.gui.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,6 +24,7 @@ import player.gui.VlcjPlayer;
 public class Config extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = -305141590333309995L;
+	private static final String LOCATION_SCRIPTS = "/home/administrateur/MesScripts";
 
 	private JPanel contentPane;
 
@@ -78,13 +80,22 @@ public class Config extends JFrame implements ActionListener {
 	private boolean preview;
 
 	private String cmd;
+	private String[] commandLine = new String[7];
 
 	public Config() {
+	}
+
+	public Config(boolean onWindows) {
+
 		setResizable(false);
 		setTitle("Configuration de la capture");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		fileChooser = new JFileChooser(".");
+		if(onWindows)
+			fileChooser = new JFileChooser(".");
+		else
+			fileChooser = new JFileChooser("/home/administrateur/");
+
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 		setBounds(100, 100, 623, 219);
@@ -424,21 +435,38 @@ public class Config extends JFrame implements ActionListener {
 					+ (Integer) spDurVidS.getValue();
 			preview = chckbxPreview.isSelected();
 
-			cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
-					+ " " + interVid + " " + durCapt + " " + durVid;
-
-			System.out.println(cmd);
+			if (System.getProperty("os.name").contains("Windows")) {
+				cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
+						+ " " + interVid + " " + durCapt + " " + durVid;
+				System.out.println(cmd);
+			} else {
+				commandLine[0] = LOCATION_SCRIPTS + "/mainScript.sh";
+				commandLine[1] = String.valueOf(interSnap);
+				commandLine[2] = String.valueOf(jpgQuality);
+				commandLine[3] = String.valueOf(interVid);
+				commandLine[4] = String.valueOf(durCapt);
+				commandLine[5] = String.valueOf(durVid);
+				commandLine[6] = "\""+directory+"\"";
+				System.out.println("Commande Linux : " + commandLine[0] + " "
+						+ commandLine[1] + " " + commandLine[2] + " "
+						+ commandLine[3] + " " + commandLine[4] + " "
+						+ commandLine[5] + " " + commandLine[6] );
+			}
 
 			try {
-				Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
-						new File(directory));
+				if (System.getProperty("os.name").contains("Windows")) {
+					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
+							new File(directory));
+				} else {
+					Runtime.getRuntime().exec(commandLine, null, null);
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						VlcjPlayer playerFrame = new VlcjPlayer();
+						SuperPlayer playerFrame = new SuperPlayer(directory);
 						playerFrame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();

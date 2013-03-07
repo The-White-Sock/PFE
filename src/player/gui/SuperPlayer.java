@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -65,6 +66,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.windows.WindowsCanvas;
+import util.files.FilePicker;
 
 import com.sun.awt.AWTUtilities;
 import com.sun.jna.Native;
@@ -84,9 +86,9 @@ import com.sun.jna.platform.WindowUtils;
  * give some general performance improvements in graphics rendering.
  */
 public class SuperPlayer extends JFrame {
-	
+
 	private static final long serialVersionUID = -6281704860617633866L;
-	
+
 	private Canvas videoSurface;
 	private final ControlPanel controlsPanel;
 
@@ -94,40 +96,12 @@ public class SuperPlayer extends JFrame {
 
 	private EmbeddedMediaPlayer mediaPlayer;
 
-	public static void main(final String[] args) throws Exception {
-		boolean onWindows = System.getProperty("os.name").contains("Windows");
-
-		if (onWindows) {
-			System.out.println("OS = Windows");
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),
-					"C:\\Program Files (x86)\\VideoLAN\\VLC");
-		} else {
-			System.out.println("OS = Linux");
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),
-					"/home/linux/vlc/install/lib");
-		}
-		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-
-		LibVlc libVlc = LibVlcFactory.factory().create();
-
-		Logger.info("  version: {}", libVlc.libvlc_get_version());
-		Logger.info(" compiler: {}", libVlc.libvlc_get_compiler());
-		Logger.info("changeset: {}", libVlc.libvlc_get_changeset());
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new SuperPlayer(args);
-			}
-		});
-	}
-
-	public SuperPlayer(String[] args) {
+	public SuperPlayer(String directory) {
 		super("VLCJ Test Player");
 		if (RuntimeUtil.isWindows()) {
 			// If running on Windows and you want the mouse/keyboard event
 			// hack...
-			videoSurface = new WindowsCanvas();	
+			videoSurface = new WindowsCanvas();
 		} else {
 			videoSurface = new Canvas();
 		}
@@ -189,10 +163,13 @@ public class SuperPlayer extends JFrame {
 				.newVideoSurface(videoSurface));
 		mediaPlayer.setPlaySubItems(true);
 
+
 		mediaPlayer.setEnableKeyInputHandling(false);
 		mediaPlayer.setEnableMouseInputHandling(false);
 
 		controlsPanel = new ControlPanel(mediaPlayer);
+
+
 
 		setLayout(new BorderLayout());
 		setBackground(Color.black);
@@ -233,7 +210,7 @@ public class SuperPlayer extends JFrame {
 						if (keyEvent.getKeyCode() == KeyEvent.VK_F12) {
 							controlsPanel.setVisible(!controlsPanel.isVisible());
 							getJMenuBar()
-									.setVisible(!getJMenuBar().isVisible());
+							.setVisible(!getJMenuBar().isVisible());
 							invalidate();
 							validate();
 						} else if (keyEvent.getKeyCode() == KeyEvent.VK_A) {
@@ -272,8 +249,15 @@ public class SuperPlayer extends JFrame {
 
 		setVisible(true);
 
+		FilePicker filePicker = new FilePicker(directory);
+		mediaPlayer.enableOverlay(false);
+		mediaPlayer.playMedia(filePicker.getLastModifiedVideo());
+		mediaPlayer.enableOverlay(true);
+
+		/**************************************************************/
+
 		mediaPlayer
-				.addMediaPlayerEventListener(new TestPlayerMediaPlayerEventListener());
+		.addMediaPlayerEventListener(new TestPlayerMediaPlayerEventListener());
 
 		// Won't work with OpenJDK or JDK1.7, requires a Sun/Oracle JVM
 		// (currently)
@@ -309,14 +293,14 @@ public class SuperPlayer extends JFrame {
 			};
 
 			AWTUtilities.setWindowOpaque(test, false); // Doesn't work in
-														// full-screen exclusive
-														// mode, you would have
-														// to use 'simulated'
-														// full-screen -
-														// requires Sun/Oracle
-														// JDK
+			// full-screen exclusive
+			// mode, you would have
+			// to use 'simulated'
+			// full-screen -
+			// requires Sun/Oracle
+			// JDK
 			test.setBackground(new Color(0, 0, 0, 0)); // This is what you do in
-														// JDK7
+			// JDK7
 
 			// mediaPlayer.setOverlay(test);
 			// mediaPlayer.enableOverlay(true);
@@ -327,7 +311,7 @@ public class SuperPlayer extends JFrame {
 	}
 
 	private final class TestPlayerMediaPlayerEventListener extends
-			MediaPlayerEventAdapter {
+	MediaPlayerEventAdapter {
 		@Override
 		public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media,
 				String mrl) {
@@ -465,8 +449,8 @@ public class SuperPlayer extends JFrame {
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	private final class TestPlayerMouseListener extends MouseAdapter {
 		@Override
 		public void mouseMoved(MouseEvent e) {

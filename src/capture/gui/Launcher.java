@@ -11,9 +11,9 @@ import com.sun.jna.NativeLibrary;
 public class Launcher {
 
 	private Config configFrame;
-	
+
 	private boolean onWindows;
-	
+
 	public static void main(String[] args) {
 		Launcher launcher = new Launcher();
 	}
@@ -35,18 +35,17 @@ public class Launcher {
 					"/home/linux/vlc/install/lib");
 		}
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-		
+
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					configFrame = new Config();
-					configFrame.setVisible(true);
+						configFrame = new Config(onWindows);
+						configFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		
-	}
 
+	}
 }

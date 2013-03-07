@@ -24,7 +24,6 @@ import javax.swing.border.EmptyBorder;
 import uk.co.caprica.vlcj.filter.swing.SwingFileFilterFactory;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import util.files.FilePicker;
 
 public class ControlPanel extends JPanel {
 
@@ -44,7 +43,7 @@ public class ControlPanel extends JPanel {
 	private JButton pauseButton;
 	private JButton playButton;
 	private JButton fastForwardButton;
-	
+
 	private JButton ejectButton;
 
 	private JFileChooser fileChooser;

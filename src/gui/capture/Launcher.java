@@ -74,7 +74,7 @@ public class Launcher {
 				.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), libPath);
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
 
-		//Ouverture de la fenêtre de configuration
+		// Ouverture de la fenêtre de configuration
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {

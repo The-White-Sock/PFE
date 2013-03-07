@@ -1,37 +1,13 @@
-/*
- * This file is part of VLCJ.
- *
- * VLCJ is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * VLCJ is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with VLCJ.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2009, 2010, 2011, 2012, 2013 Caprica Software Limited.
- */
-
-package player.gui;
+package gui.player;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -45,14 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
 import uk.co.caprica.vlcj.logger.Logger;
 import uk.co.caprica.vlcj.player.AudioOutput;
@@ -68,18 +41,13 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.windows.WindowsCanvas;
 import util.files.FilePicker;
 
-import com.sun.awt.AWTUtilities;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
-import com.sun.jna.platform.WindowUtils;
-
 /**
  * Simple test harness creates an AWT Window and plays a video.
  * <p>
  * This is <strong>very</strong> basic but should give you an idea of how to
  * build a media player.
  * <p>
- * In case you didn't realise, you can press F12 to toggle the visibility of the
+ * In case you didn't realize, you can press F12 to toggle the visibility of the
  * player controls.
  * <p>
  * Java7 provides -Dsun.java2d.xrender=True or -Dsun.java2d.xrender=true, might
@@ -95,6 +63,10 @@ public class SuperPlayer extends JFrame {
 	private MediaPlayerFactory mediaPlayerFactory;
 
 	private EmbeddedMediaPlayer mediaPlayer;
+
+	private FilePicker filePicker;
+
+	private String videoInPlay;
 
 	public SuperPlayer(String directory) {
 		super("VLCJ Test Player");
@@ -163,13 +135,12 @@ public class SuperPlayer extends JFrame {
 				.newVideoSurface(videoSurface));
 		mediaPlayer.setPlaySubItems(true);
 
-
 		mediaPlayer.setEnableKeyInputHandling(false);
 		mediaPlayer.setEnableMouseInputHandling(false);
 
-		controlsPanel = new ControlPanel(mediaPlayer, directory);
+		filePicker = new FilePicker(directory);
 
-
+		controlsPanel = new ControlPanel(this);
 
 		setLayout(new BorderLayout());
 		setBackground(Color.black);
@@ -210,37 +181,9 @@ public class SuperPlayer extends JFrame {
 						if (keyEvent.getKeyCode() == KeyEvent.VK_F12) {
 							controlsPanel.setVisible(!controlsPanel.isVisible());
 							getJMenuBar()
-							.setVisible(!getJMenuBar().isVisible());
+									.setVisible(!getJMenuBar().isVisible());
 							invalidate();
 							validate();
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_A) {
-							mediaPlayer.setAudioDelay(mediaPlayer
-									.getAudioDelay() - 50000);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_S) {
-							mediaPlayer.setAudioDelay(mediaPlayer
-									.getAudioDelay() + 50000);
-						}
-						// else if(keyEvent.getKeyCode() == KeyEvent.VK_N) {
-						// mediaPlayer.nextFrame();
-						// }
-						else if (keyEvent.getKeyCode() == KeyEvent.VK_1) {
-							mediaPlayer.setTime(60000 * 1);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_2) {
-							mediaPlayer.setTime(60000 * 2);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_3) {
-							mediaPlayer.setTime(60000 * 3);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_4) {
-							mediaPlayer.setTime(60000 * 4);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_5) {
-							mediaPlayer.setTime(60000 * 5);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_6) {
-							mediaPlayer.setTime(60000 * 6);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_7) {
-							mediaPlayer.setTime(60000 * 7);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_8) {
-							mediaPlayer.setTime(60000 * 8);
-						} else if (keyEvent.getKeyCode() == KeyEvent.VK_9) {
-							mediaPlayer.setTime(60000 * 9);
 						}
 					}
 				}
@@ -248,75 +191,43 @@ public class SuperPlayer extends JFrame {
 		}, AWTEvent.KEY_EVENT_MASK);
 
 		setVisible(true);
-		
-		/**************************************************************/
 
-		FilePicker filePicker = new FilePicker(directory);
-		if(filePicker.getLastModifiedVideo() != null)
-		{
-		mediaPlayer.enableOverlay(false);
-		mediaPlayer.playMedia(filePicker.getLastModifiedVideo());
-		mediaPlayer.enableOverlay(true);
+		/**************************************************************/
+		videoInPlay = filePicker.getLastModifiedVideo();
+		if (videoInPlay != null) {
+			mediaPlayer.enableOverlay(false);
+			mediaPlayer.playMedia(videoInPlay);
+			mediaPlayer.enableOverlay(true);
+		} else {
+			JOptionPane.showMessageDialog(this,
+					"Il n'y a pas encore de vidéo disponible",
+					"Vidéo indisponible", JOptionPane.ERROR_MESSAGE);
 		}
 
 		/**************************************************************/
 
 		mediaPlayer
-		.addMediaPlayerEventListener(new TestPlayerMediaPlayerEventListener());
-
-		// Won't work with OpenJDK or JDK1.7, requires a Sun/Oracle JVM
-		// (currently)
-		boolean transparentWindowsSupport = true;
-		try {
-			Class.forName("com.sun.awt.AWTUtilities");
-		} catch (Exception e) {
-			transparentWindowsSupport = false;
-		}
-
-		Logger.debug("transparentWindowsSupport={}", transparentWindowsSupport);
-
-		if (transparentWindowsSupport) {
-			final Window test = new Window(null,
-					WindowUtils.getAlphaCompatibleGraphicsConfiguration()) {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void paint(Graphics g) {
-					Graphics2D g2 = (Graphics2D) g;
-
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-							RenderingHints.VALUE_ANTIALIAS_ON);
-					g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-							RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-
-					g.setColor(Color.white);
-					g.fillRoundRect(100, 150, 100, 100, 32, 32);
-
-					g.setFont(new Font("Sans", Font.BOLD, 32));
-					g.drawString("Heavyweight overlay test", 100, 300);
-				}
-			};
-
-			AWTUtilities.setWindowOpaque(test, false); // Doesn't work in
-			// full-screen exclusive
-			// mode, you would have
-			// to use 'simulated'
-			// full-screen -
-			// requires Sun/Oracle
-			// JDK
-			test.setBackground(new Color(0, 0, 0, 0)); // This is what you do in
-			// JDK7
-
-			// mediaPlayer.setOverlay(test);
-			// mediaPlayer.enableOverlay(true);
-		}
-
-		// This might be useful
-		// enableMousePointer(false);
+				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
 	}
 
-	private final class TestPlayerMediaPlayerEventListener extends
-	MediaPlayerEventAdapter {
+	public EmbeddedMediaPlayer getMediaPlayer() {
+		return mediaPlayer;
+	}
+
+	public String getLastVid() {
+		return filePicker.getLastModifiedVideo();
+	}
+
+	public String getVideoInPlay() {
+		return videoInPlay;
+	}
+
+	public void setVideoInPlay(String vidPath) {
+		videoInPlay = vidPath;
+	}
+
+	private final class SuperPlayerMediaPlayerEventListener extends
+			MediaPlayerEventAdapter {
 		@Override
 		public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media,
 				String mrl) {

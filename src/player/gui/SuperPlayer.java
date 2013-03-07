@@ -167,7 +167,7 @@ public class SuperPlayer extends JFrame {
 		mediaPlayer.setEnableKeyInputHandling(false);
 		mediaPlayer.setEnableMouseInputHandling(false);
 
-		controlsPanel = new ControlPanel(mediaPlayer);
+		controlsPanel = new ControlPanel(mediaPlayer, directory);
 
 
 
@@ -248,11 +248,16 @@ public class SuperPlayer extends JFrame {
 		}, AWTEvent.KEY_EVENT_MASK);
 
 		setVisible(true);
+		
+		/**************************************************************/
 
 		FilePicker filePicker = new FilePicker(directory);
+		if(filePicker.getLastModifiedVideo() != null)
+		{
 		mediaPlayer.enableOverlay(false);
 		mediaPlayer.playMedia(filePicker.getLastModifiedVideo());
 		mediaPlayer.enableOverlay(true);
+		}
 
 		/**************************************************************/
 

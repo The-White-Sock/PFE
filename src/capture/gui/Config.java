@@ -440,7 +440,7 @@ public class Config extends JFrame implements ActionListener {
 						+ " " + interVid + " " + durCapt + " " + durVid;
 				System.out.println(cmd);
 			} else {
-				commandLine[0] = LOCATION_SCRIPTS + "/mainScript.sh";
+				commandLine[0] = "mainScript.sh";
 				commandLine[1] = String.valueOf(interSnap);
 				commandLine[2] = String.valueOf(jpgQuality);
 				commandLine[3] = String.valueOf(interVid);

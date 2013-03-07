@@ -24,6 +24,7 @@ import javax.swing.filechooser.FileFilter;
 import uk.co.caprica.vlcj.filter.swing.SwingFileFilterFactory;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import util.files.FilePicker;
 
 public class ControlPanel extends JPanel {
 
@@ -51,8 +52,13 @@ public class ControlPanel extends JPanel {
 	private JFileChooser fileChooser;
 
 	private boolean mousePressedPlaying = false;
+	
+	private String directory;
 
-	public ControlPanel(EmbeddedMediaPlayer mediaPlayer) {
+	public ControlPanel(EmbeddedMediaPlayer mediaPlayer, String directory) {
+		
+		this.directory = directory;
+		
 		this.mediaPlayer = mediaPlayer;
 
 		createUI();
@@ -247,7 +253,11 @@ public class ControlPanel extends JPanel {
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mediaPlayer.play();
+				//mediaPlayer.play();
+				FilePicker filePicker = new FilePicker(directory);
+				mediaPlayer.enableOverlay(false);
+				mediaPlayer.playMedia(filePicker.getLastModifiedVideo());
+				mediaPlayer.enableOverlay(true);
 			}
 		});
 

@@ -3,20 +3,19 @@ package util.files;
 import java.io.File;
 
 public class FilePicker {
-	
+
 	private File file;
-	
-	public FilePicker(String filePath)
-	{
-		file = new File(filePath);	
+
+	public FilePicker(String filePath) {
+		file = new File(filePath);
 	}
-	
-	public String getLastModifiedVideo()
+
+	public String getLastModifiedVideo() 
 	{
 		/*********************************************************************/
 		File[] subfiles = file.listFiles();
 		File derniereVideo = null;
-		if (subfiles.length > 0)
+		if (subfiles.length > 0) 
 		{
 			derniereVideo = subfiles[0];
 			for (int i = 1; i < subfiles.length; i++) 
@@ -30,11 +29,16 @@ public class FilePicker {
 					}
 				}
 			}
+			if (!derniereVideo.getPath().contains(".avi")) 
+			{
+				return null;
+			}
 
 		}
-		//System.out.println(derniereVideo.getAbsolutePath());
+
+		// System.out.println(derniereVideo.getAbsolutePath());
 		return derniereVideo.getAbsolutePath();
-		
+
 	}
 
 }

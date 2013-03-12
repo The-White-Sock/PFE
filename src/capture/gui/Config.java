@@ -446,7 +446,7 @@ public class Config extends JFrame implements ActionListener {
 				commandLine[3] = String.valueOf(interVid);
 				commandLine[4] = String.valueOf(durCapt);
 				commandLine[5] = String.valueOf(durVid);
-				commandLine[6] = "\""+directory+"\"";
+				commandLine[6] = directory;
 				System.out.println("Commande Linux : " + commandLine[0] + " "
 						+ commandLine[1] + " " + commandLine[2] + " "
 						+ commandLine[3] + " " + commandLine[4] + " "
@@ -458,7 +458,7 @@ public class Config extends JFrame implements ActionListener {
 					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
 							new File(directory));
 				} else {
-					Runtime.getRuntime().exec(commandLine, null, null);
+					Runtime.getRuntime().exec(commandLine, null, new File(directory));
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();

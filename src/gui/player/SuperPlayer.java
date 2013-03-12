@@ -70,6 +70,7 @@ public class SuperPlayer extends JFrame {
 
 	public SuperPlayer(String directory) {
 		super("VLCJ Test Player");
+		setUndecorated(true);
 		if (RuntimeUtil.isWindows()) {
 			// If running on Windows and you want the mouse/keyboard event
 			// hack...
@@ -143,27 +144,6 @@ public class SuperPlayer extends JFrame {
 		add(videoSurface, BorderLayout.CENTER);
 		add(controlsPanel, BorderLayout.SOUTH);
 		pack();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				Logger.debug("windowClosing(evt={})", evt);
-
-				if (videoSurface instanceof WindowsCanvas) {
-					((WindowsCanvas) videoSurface).release();
-				}
-
-				if (mediaPlayer != null) {
-					mediaPlayer.release();
-					mediaPlayer = null;
-				}
-
-				if (mediaPlayerFactory != null) {
-					mediaPlayerFactory.release();
-					mediaPlayerFactory = null;
-				}
-			}
-		});
 
 		// Global AWT key handler, you're better off using Swing's InputMap and
 		// ActionMap with a JFrame - that would solve all sorts of focus issues
@@ -174,23 +154,32 @@ public class SuperPlayer extends JFrame {
 				if (event instanceof KeyEvent) {
 					KeyEvent keyEvent = (KeyEvent) event;
 					if (keyEvent.getID() == KeyEvent.KEY_PRESSED) {
-						if (keyEvent.getKeyCode() == KeyEvent.VK_F12) {
-							controlsPanel.setVisible(!controlsPanel.isVisible());
-							getJMenuBar()
-									.setVisible(!getJMenuBar().isVisible());
-							invalidate();
-							validate();
+						if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+//							Logger.debug("windowClosing(evt={VK_ESCAPE})");
+
+							if (videoSurface instanceof WindowsCanvas) {
+								((WindowsCanvas) videoSurface).release();
+							}
+
+							if (mediaPlayer != null) {
+								mediaPlayer.release();
+								mediaPlayer = null;
+							}
+
+							if (mediaPlayerFactory != null) {
+								mediaPlayerFactory.release();
+								mediaPlayerFactory = null;
+							}
+							dispose();
 						}
 					}
 				}
 			}
 		}, AWTEvent.KEY_EVENT_MASK);
 
-		setVisible(true);
-
 		mediaPlayer
 				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
-		mediaPlayer.setFullScreen(true);
+		// mediaPlayer.toggleFullScreen();
 
 		/**************************************************************/
 		videoInPlay = filePicker.getLastModifiedVideo();
@@ -205,7 +194,7 @@ public class SuperPlayer extends JFrame {
 		}
 
 		/**************************************************************/
-		
+
 	}
 
 	public EmbeddedMediaPlayer getMediaPlayer() {
@@ -253,40 +242,6 @@ public class SuperPlayer extends JFrame {
 		@Override
 		public void stopped(MediaPlayer mediaPlayer) {
 			Logger.debug("stopped(mediaPlayer={})", mediaPlayer);
-		}
-
-		@Override
-		public void videoOutput(MediaPlayer mediaPlayer, int newCount) {
-			Logger.debug("videoOutput(mediaPlayer={},newCount={})",
-					mediaPlayer, newCount);
-			if (newCount == 0) {
-				return;
-			}
-
-			MediaDetails mediaDetails = mediaPlayer.getMediaDetails();
-			Logger.info("mediaDetails={}", mediaDetails);
-
-			MediaMeta mediaMeta = mediaPlayer.getMediaMeta();
-			Logger.info("mediaMeta={}", mediaMeta);
-
-			// You can set a logo like this if you like...
-			File logoFile = new File("./etc/vlcj-logo.png");
-			if (logoFile.exists()) {
-				mediaPlayer.setLogoFile(logoFile.getAbsolutePath());
-				mediaPlayer.setLogoOpacity(0.5f);
-				mediaPlayer.setLogoLocation(10, 10);
-				mediaPlayer.enableLogo(true);
-			}
-
-			// Demo the marquee
-			mediaPlayer.setMarqueeText("vlcj java bindings for vlc");
-			mediaPlayer.setMarqueeSize(40);
-			mediaPlayer.setMarqueeOpacity(95);
-			mediaPlayer.setMarqueeColour(Color.white);
-			mediaPlayer.setMarqueeTimeout(5000);
-			mediaPlayer.setMarqueeLocation(50, 120);
-			mediaPlayer.enableMarquee(true);
-
 		}
 
 		@Override

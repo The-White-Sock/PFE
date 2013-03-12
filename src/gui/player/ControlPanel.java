@@ -44,8 +44,6 @@ public class ControlPanel extends JPanel {
 	private JButton playButton;
 	private JButton fastForwardButton;
 
-	private JButton ejectButton;
-
 	private JFileChooser fileChooser;
 
 	private boolean mousePressedPlaying = false;
@@ -77,6 +75,7 @@ public class ControlPanel extends JPanel {
 		positionSlider.setMaximum(1000);
 		positionSlider.setValue(0);
 		positionSlider.setToolTipText("Position");
+		positionSlider.setEnabled(false);
 
 		rewindButton = new JButton();
 		rewindButton.setIcon(new ImageIcon(getClass().getClassLoader()
@@ -102,11 +101,6 @@ public class ControlPanel extends JPanel {
 		fastForwardButton.setIcon(new ImageIcon(getClass().getClassLoader()
 				.getResource("icons/control_fastforward_blue.png")));
 		fastForwardButton.setToolTipText("Avance rapide");
-
-		ejectButton = new JButton();
-		ejectButton.setIcon(new ImageIcon(getClass().getClassLoader()
-				.getResource("icons/control_eject_blue.png")));
-		ejectButton.setToolTipText("Charger un fichier");
 
 		fileChooser = new JFileChooser();
 		fileChooser.setApproveButtonText("Lire");
@@ -139,8 +133,6 @@ public class ControlPanel extends JPanel {
 		bottomPanel.add(pauseButton);
 		bottomPanel.add(playButton);
 		bottomPanel.add(fastForwardButton);
-
-		bottomPanel.add(ejectButton);
 
 		add(bottomPanel, BorderLayout.SOUTH);
 	}
@@ -191,25 +183,6 @@ public class ControlPanel extends JPanel {
 
 	private void registerListeners() {
 
-		positionSlider.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (mediaPlayer.isPlaying()) {
-					mousePressedPlaying = true;
-					mediaPlayer.pause();
-				} else {
-					mousePressedPlaying = false;
-				}
-				setSliderBasedPosition();
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				setSliderBasedPosition();
-				updateUIState();
-			}
-		});
-
 		rewindButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -253,19 +226,6 @@ public class ControlPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				skip(SKIP_TIME_MS);
-			}
-		});
-
-		ejectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mediaPlayer.enableOverlay(false);
-				if (JFileChooser.APPROVE_OPTION == fileChooser
-						.showOpenDialog(ControlPanel.this)) {
-					mediaPlayer.playMedia(fileChooser.getSelectedFile()
-							.getAbsolutePath());
-				}
-				mediaPlayer.enableOverlay(true);
 			}
 		});
 	}

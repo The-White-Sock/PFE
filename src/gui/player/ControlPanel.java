@@ -1,4 +1,4 @@
-package player.gui;
+package gui.player;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -15,16 +15,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 
 import uk.co.caprica.vlcj.filter.swing.SwingFileFilterFactory;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import util.files.FilePicker;
 
 public class ControlPanel extends JPanel {
 
@@ -47,19 +46,16 @@ public class ControlPanel extends JPanel {
 
 	private JButton ejectButton;
 
-	private JButton fullScreenButton;
-
 	private JFileChooser fileChooser;
 
 	private boolean mousePressedPlaying = false;
-	
-	private String directory;
 
-	public ControlPanel(EmbeddedMediaPlayer mediaPlayer, String directory) {
-		
-		this.directory = directory;
-		
-		this.mediaPlayer = mediaPlayer;
+	private SuperPlayer parent;
+
+	public ControlPanel(SuperPlayer parent) {
+		this.parent = parent;
+
+		this.mediaPlayer = parent.getMediaPlayer();
 
 		createUI();
 
@@ -113,21 +109,8 @@ public class ControlPanel extends JPanel {
 		ejectButton.setToolTipText("Charger un fichier");
 
 		fileChooser = new JFileChooser();
-		fileChooser.setApproveButtonText("Play");
-		fileChooser.addChoosableFileFilter(SwingFileFilterFactory
-				.newVideoFileFilter());
-		fileChooser.addChoosableFileFilter(SwingFileFilterFactory
-				.newAudioFileFilter());
-		fileChooser.addChoosableFileFilter(SwingFileFilterFactory
-				.newPlayListFileFilter());
-		FileFilter defaultFilter = SwingFileFilterFactory.newMediaFileFilter();
-		fileChooser.addChoosableFileFilter(defaultFilter);
-		fileChooser.setFileFilter(defaultFilter);
-
-		fullScreenButton = new JButton();
-		fullScreenButton.setIcon(new ImageIcon(getClass().getClassLoader()
-				.getResource("icons/image.png")));
-		fullScreenButton.setToolTipText("Plein \u00E9cran");
+		fileChooser.setApproveButtonText("Lire");
+		fileChooser.setFileFilter(SwingFileFilterFactory.newVideoFileFilter());
 	}
 
 	private void layoutControls() {
@@ -158,8 +141,6 @@ public class ControlPanel extends JPanel {
 		bottomPanel.add(fastForwardButton);
 
 		bottomPanel.add(ejectButton);
-
-		bottomPanel.add(fullScreenButton);
 
 		add(bottomPanel, BorderLayout.SOUTH);
 	}
@@ -253,11 +234,18 @@ public class ControlPanel extends JPanel {
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//mediaPlayer.play();
-				FilePicker filePicker = new FilePicker(directory);
-				mediaPlayer.enableOverlay(false);
-				mediaPlayer.playMedia(filePicker.getLastModifiedVideo());
-				mediaPlayer.enableOverlay(true);
+				String video = parent.getLastVid();
+
+				if (video == null) {
+					JOptionPane.showMessageDialog(parent,
+							"Il n'y a pas encore de vidéo disponible",
+							"Vidéo indisponible", JOptionPane.ERROR_MESSAGE);
+				} else {
+					mediaPlayer.enableOverlay(false);
+					mediaPlayer.playMedia(video);
+					mediaPlayer.enableOverlay(true);
+					parent.setVideoInPlay(video);
+				}
 			}
 		});
 
@@ -278,13 +266,6 @@ public class ControlPanel extends JPanel {
 							.getAbsolutePath());
 				}
 				mediaPlayer.enableOverlay(true);
-			}
-		});
-
-		fullScreenButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mediaPlayer.toggleFullScreen();
 			}
 		});
 	}

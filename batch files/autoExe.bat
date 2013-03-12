@@ -29,17 +29,17 @@ REM On lance la capture
 START autoCapture %durTot% %interval% %quality%
 ECHO Capture lancée
 
-TIMEOUT %durCapt%
-REM SET /a durCaptms=(durCapt*1000)+5
-REM ping 192.0.2.2 -n 1 -w %durCaptms% > nul
+REM TIMEOUT %durCapt%
+SET /a durCaptms=(durCapt*1000)+5
+ping 192.0.2.2 -n 1 -w %durCaptms% > nul
 
 SET /a interVidms=interVid*1000
 
 FOR /L %%G IN (0,1,%nbMaxVid%) DO (
 	START mencoderByInterval %interval% %durCapt% %durVid% %%G
 	ECHO Encodage de la vidéo %%G lancé
-	TIMEOUT %interVid%
-	REM ping 192.0.2.2 -n 1 -w %interVidms%*1000 > nul
+	REM TIMEOUT %interVid%
+	ping 192.0.2.2 -n 1 -w %interVidms%*1000 > nul
 )
 
 PAUSE

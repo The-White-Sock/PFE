@@ -1,4 +1,4 @@
-package player.gui;
+package gui.player;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;

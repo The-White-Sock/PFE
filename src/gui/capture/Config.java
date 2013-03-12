@@ -1,6 +1,7 @@
-package capture.gui;
+package gui.capture;
 
-import player.gui.*;
+import gui.player.SuperPlayer;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,11 +20,17 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import player.gui.VlcjPlayer;
-
+/**
+ * Fenêtre de configuration de la capture
+ * 
+ * @author "Joachim ALIBERT & Guillaume GEDEON"
+ * 
+ */
 public class Config extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = -305141590333309995L;
+
+	/** Lien vers la location des scripts sous Linux */
 	private static final String LOCATION_SCRIPTS = "/home/administrateur/MesScripts";
 
 	private JPanel contentPane;
@@ -81,23 +88,35 @@ public class Config extends JFrame implements ActionListener {
 
 	private String cmd;
 	private String[] commandLine = new String[7];
+	private boolean onWindows;
 
-	public Config() {
-	}
-
+	/**
+	 * Constructeur de la classe Config crée et affiche la fenêtre de
+	 * configuration de la capture. Certaines options différent en fonction de
+	 * l'os
+	 * 
+	 * @param onWindows
+	 *            boolean permettant de déterminer si le programme est lancé
+	 *            sous Windows. Permet de lancer les commandes correspondantes à
+	 *            l'os
+	 */
 	public Config(boolean onWindows) {
+		super("Configuration de la capture");
 
+		this.onWindows = onWindows;
 		setResizable(false);
-		setTitle("Configuration de la capture");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		if(onWindows)
+		// initialisation du fileChooser en fonction de l'OS
+		if (this.onWindows)
 			fileChooser = new JFileChooser(".");
 		else
 			fileChooser = new JFileChooser("/home/administrateur/");
-
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
+		/***********************************/
+		/** INITIALISATION DE L'INTERFACE **/
+		/***********************************/
 		setBounds(100, 100, 623, 219);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -403,12 +422,18 @@ public class Config extends JFrame implements ActionListener {
 				SpringLayout.SOUTH, lblDurVid);
 		contentPane.add(lblDurVidS);
 
+		// Ajout de listener pour les deux boutons
 		btChooseDirectory.addActionListener(this);
 		btnLaunch.addActionListener(this);
 	}
 
+	/**
+	 * Gestion des événements liés aux boutons
+	 */
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action");
+
+		// Choix Du dossier
 		if (e.getSource() == btChooseDirectory) {
 			int returnVal = fileChooser.showOpenDialog(this);
 
@@ -418,7 +443,9 @@ public class Config extends JFrame implements ActionListener {
 			}
 		}
 
+		// Lancement de la capture
 		else if (e.getSource() == btnLaunch) {
+			// récupération des différents paramètres
 			directory = tfDirectory.getText();
 			interSnap = (Integer) spInterSnap.getValue();
 			durTot = (Integer) spDuTotH.getValue() * 3600
@@ -435,34 +462,57 @@ public class Config extends JFrame implements ActionListener {
 					+ (Integer) spDurVidS.getValue();
 			preview = chckbxPreview.isSelected();
 
-			if (System.getProperty("os.name").contains("Windows")) {
+			// Création de la commande pour Windows
+			if (onWindows) {
 				cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
 						+ " " + interVid + " " + durCapt + " " + durVid;
 				System.out.println(cmd);
-			} else {
+			}
+
+			// Création de la commande pour Linux
+			else {
 				commandLine[0] = "mainScript.sh";
 				commandLine[1] = String.valueOf(interSnap);
 				commandLine[2] = String.valueOf(jpgQuality);
 				commandLine[3] = String.valueOf(interVid);
 				commandLine[4] = String.valueOf(durCapt);
 				commandLine[5] = String.valueOf(durVid);
+<<<<<<< HEAD:src/capture/gui/Config.java
 				commandLine[6] = directory;
+=======
+				commandLine[6] = "\"" + directory + "\"";
+>>>>>>> 170304069a028c703ed98de58b5d7a20846a16c7:src/gui/capture/Config.java
 				System.out.println("Commande Linux : " + commandLine[0] + " "
 						+ commandLine[1] + " " + commandLine[2] + " "
 						+ commandLine[3] + " " + commandLine[4] + " "
-						+ commandLine[5] + " " + commandLine[6] );
+						+ commandLine[5] + " " + commandLine[6]);
 			}
 
+			// Exécution de la commande dans un shell
 			try {
+				// Commande Windows
 				if (System.getProperty("os.name").contains("Windows")) {
 					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
 							new File(directory));
+<<<<<<< HEAD:src/capture/gui/Config.java
 				} else {
 					Runtime.getRuntime().exec(commandLine, null, new File(directory));
+=======
+					directory += "\\Video"; // Ajout du dossier Video à
+											// directory pour le lecteur
+				}
+				// Commande Linux
+				else {
+					Runtime.getRuntime().exec(commandLine, null, null);
+>>>>>>> 170304069a028c703ed98de58b5d7a20846a16c7:src/gui/capture/Config.java
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+
+			System.out.println("Vid directory : " + directory);
+
+			// Ouverture de la fenêtre du Player
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {

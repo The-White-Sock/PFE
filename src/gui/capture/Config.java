@@ -465,7 +465,8 @@ public class Config extends JFrame implements ActionListener {
 			// Création de la commande pour Windows
 			if (onWindows) {
 				cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
-						+ " " + interVid + " " + durCapt + " " + durVid;
+						+ " " + preview + " " + interVid + " " + durCapt + " "
+						+ durVid;
 				System.out.println(cmd);
 			}
 
@@ -490,8 +491,8 @@ public class Config extends JFrame implements ActionListener {
 				if (System.getProperty("os.name").contains("Windows")) {
 					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
 							new File(directory));
-					directory += "\\Video"; // Ajout du dossier Video à
-											// directory pour le lecteur
+					// Ajout du dossier Video à directory pour le lecteur
+					directory += "\\Video";
 				}
 				// Commande Linux
 				else {

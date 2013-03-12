@@ -33,7 +33,7 @@ public class FilePicker {
 		String videoPath = null;
 
 		// Dans le cas où il existe des sous-fichiers on récupère la dernière
-		if (subfiles != null) {
+		if (subfiles != null && subfiles.length > 0) {
 			File derniereVideo = subfiles[0];
 			for (int i = 0; i < subfiles.length; i++) {
 				File subfile = subfiles[i];

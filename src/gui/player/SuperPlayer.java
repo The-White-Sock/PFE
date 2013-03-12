@@ -87,10 +87,6 @@ public class SuperPlayer extends JFrame {
 		// components this is probably a good idea
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-		TestPlayerMouseListener mouseListener = new TestPlayerMouseListener();
-		videoSurface.addMouseListener(mouseListener);
-		videoSurface.addMouseMotionListener(mouseListener);
-
 		List<String> vlcArgs = new ArrayList<String>();
 
 		vlcArgs.add("--no-plugins-cache");
@@ -192,6 +188,10 @@ public class SuperPlayer extends JFrame {
 
 		setVisible(true);
 
+		mediaPlayer
+				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
+		mediaPlayer.setFullScreen(true);
+
 		/**************************************************************/
 		videoInPlay = filePicker.getLastModifiedVideo();
 		if (videoInPlay != null) {
@@ -205,9 +205,7 @@ public class SuperPlayer extends JFrame {
 		}
 
 		/**************************************************************/
-
-		mediaPlayer
-				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
+		
 	}
 
 	public EmbeddedMediaPlayer getMediaPlayer() {
@@ -270,18 +268,6 @@ public class SuperPlayer extends JFrame {
 
 			MediaMeta mediaMeta = mediaPlayer.getMediaMeta();
 			Logger.info("mediaMeta={}", mediaMeta);
-
-			final Dimension dimension = mediaPlayer.getVideoDimension();
-			Logger.debug("dimension={}", dimension);
-			if (dimension != null) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						videoSurface.setSize(dimension);
-						pack();
-					}
-				});
-			}
 
 			// You can set a logo like this if you like...
 			File logoFile = new File("./etc/vlcj-logo.png");
@@ -361,41 +347,6 @@ public class SuperPlayer extends JFrame {
 					BufferedImage.TYPE_INT_ARGB);
 			videoSurface.setCursor(Toolkit.getDefaultToolkit()
 					.createCustomCursor(blankImage, new Point(0, 0), ""));
-		}
-	}
-
-	/**
-	 *
-	 */
-	private final class TestPlayerMouseListener extends MouseAdapter {
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			Logger.trace("mouseMoved(e={})", e);
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			Logger.debug("mousePressed(e={})", e);
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			Logger.debug("mouseReleased(e={})", e);
-		}
-
-		@Override
-		public void mouseWheelMoved(MouseWheelEvent e) {
-			Logger.debug("mouseWheelMoved(e={})", e);
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			Logger.debug("mouseEntered(e={})", e);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			Logger.debug("mouseExited(e={})", e);
 		}
 	}
 }

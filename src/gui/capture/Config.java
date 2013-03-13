@@ -4,8 +4,6 @@ import gui.player.SuperPlayer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -91,6 +89,7 @@ public class Config extends JFrame implements ActionListener {
 	private String cmd;
 	private String[] commandLine = new String[7];
 	private boolean onWindows;
+	private SuperPlayer superPlayer;
 
 	/**
 	 * Constructeur de la classe Config cr�e et affiche la fen�tre de
@@ -108,6 +107,8 @@ public class Config extends JFrame implements ActionListener {
 		this.onWindows = onWindows;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		superPlayer = new SuperPlayer();
 
 		// initialisation du fileChooser en fonction de l'OS
 		if (this.onWindows)
@@ -464,14 +465,15 @@ public class Config extends JFrame implements ActionListener {
 					+ (Integer) spDurVidS.getValue();
 			preview = chckbxPreview.isSelected();
 
-			// Cr�ation de la commande pour Windows
+			// Création de la commande pour Windows
 			if (onWindows) {
 				cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
-						+ " " + interVid + " " + durCapt + " " + durVid;
+						+ " " + preview + " " + interVid + " " + durCapt + " "
+						+ durVid;
 				System.out.println(cmd);
 			}
 
-			// Cr�ation de la commande pour Linux
+			// Création de la commande pour Linux
 			else {
 				commandLine[0] = "mainScript.sh";
 				commandLine[1] = String.valueOf(interSnap);
@@ -486,14 +488,14 @@ public class Config extends JFrame implements ActionListener {
 						+ commandLine[5] + " " + commandLine[6]);
 			}
 
-			// Ex�cution de la commande dans un shell
+			//Exécution de la commande dans un shell
 			try {
 				// Commande Windows
 				if (System.getProperty("os.name").contains("Windows")) {
 					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
 							new File(directory));
-					directory += "\\Video"; // Ajout du dossier Video �
-					// directory pour le lecteur
+					// Ajout du dossier Video à directory pour le lecteur
+					directory += "\\Video";
 				}
 				// Commande Linux
 				else {
@@ -505,12 +507,12 @@ public class Config extends JFrame implements ActionListener {
 
 			System.out.println("Vid directory : " + directory);
 
-			// Ouverture de la fen�tre du Player
+			// Ouverture de la fenêtre du Player
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						SuperPlayer playerFrame = new SuperPlayer(directory);
-						playerFrame.setVisible(true);
+						superPlayer.setVisible(true);
+						superPlayer.changeDirectory(directory);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

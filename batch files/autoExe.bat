@@ -12,9 +12,10 @@ REM SET /p durVid= Durée de la vidéo (en s) :
 SET interval=%1
 SET durTot=%2
 SET quality=%3
-SET interVid=%4
-SET durCapt=%5
-SET durVid=%6
+SET preview=%4
+SET interVid=%5
+SET durCapt=%6
+SET durVid=%7
 
 SET /a nbMaxVid=durTot/(durCapt+interVid)
 ECHO %nbMaxVid% seront réalisées
@@ -26,7 +27,7 @@ IF NOT EXIST ".\tmp.txt" (ECHO. 2>".\tmp.txt")
 IF NOT EXIST ".\list.txt" (ECHO. 2>".\list.txt")
 
 REM On lance la capture
-START autoCapture %durTot% %interval% %quality%
+START autoCapture %durTot% %interval% %quality% %preview%
 ECHO Capture lancée
 
 REM TIMEOUT %durCapt%

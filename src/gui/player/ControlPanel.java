@@ -5,8 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
@@ -43,8 +40,6 @@ public class ControlPanel extends JPanel {
 	private JButton pauseButton;
 	private JButton playButton;
 	private JButton fastForwardButton;
-
-	private JButton ejectButton;
 
 	private JFileChooser fileChooser;
 
@@ -77,6 +72,7 @@ public class ControlPanel extends JPanel {
 		positionSlider.setMaximum(1000);
 		positionSlider.setValue(0);
 		positionSlider.setToolTipText("Position");
+		positionSlider.setEnabled(false);
 
 		rewindButton = new JButton();
 		rewindButton.setIcon(new ImageIcon(getClass().getClassLoader()
@@ -102,11 +98,6 @@ public class ControlPanel extends JPanel {
 		fastForwardButton.setIcon(new ImageIcon(getClass().getClassLoader()
 				.getResource("icons/control_fastforward_blue.png")));
 		fastForwardButton.setToolTipText("Avance rapide");
-
-		ejectButton = new JButton();
-		ejectButton.setIcon(new ImageIcon(getClass().getClassLoader()
-				.getResource("icons/control_eject_blue.png")));
-		ejectButton.setToolTipText("Charger un fichier");
 
 		fileChooser = new JFileChooser();
 		fileChooser.setApproveButtonText("Lire");
@@ -140,24 +131,7 @@ public class ControlPanel extends JPanel {
 		bottomPanel.add(playButton);
 		bottomPanel.add(fastForwardButton);
 
-		bottomPanel.add(ejectButton);
-
 		add(bottomPanel, BorderLayout.SOUTH);
-	}
-
-	/**
-	 * Broken out position setting, handles updating mediaPlayer
-	 */
-	private void setSliderBasedPosition() {
-		if (!mediaPlayer.isSeekable()) {
-			return;
-		}
-		float positionValue = positionSlider.getValue() / 1000.0f;
-		// Avoid end of file freeze-up
-		if (positionValue > 0.99f) {
-			positionValue = 0.99f;
-		}
-		mediaPlayer.setPosition(positionValue);
 	}
 
 	private void updateUIState() {
@@ -191,25 +165,6 @@ public class ControlPanel extends JPanel {
 
 	private void registerListeners() {
 
-		positionSlider.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (mediaPlayer.isPlaying()) {
-					mousePressedPlaying = true;
-					mediaPlayer.pause();
-				} else {
-					mousePressedPlaying = false;
-				}
-				setSliderBasedPosition();
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				setSliderBasedPosition();
-				updateUIState();
-			}
-		});
-
 		rewindButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -221,6 +176,8 @@ public class ControlPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mediaPlayer.stop();
+				positionSlider.setValue(0);
+				timeLabel.setText("hh:mm:ss");
 			}
 		});
 
@@ -234,18 +191,7 @@ public class ControlPanel extends JPanel {
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String video = parent.getLastVid();
-
-				if (video == null) {
-					JOptionPane.showMessageDialog(parent,
-							"Il n'y a pas encore de vidéo disponible",
-							"Vidéo indisponible", JOptionPane.ERROR_MESSAGE);
-				} else {
-					mediaPlayer.enableOverlay(false);
-					mediaPlayer.playMedia(video);
-					mediaPlayer.enableOverlay(true);
-					parent.setVideoInPlay(video);
-				}
+				parent.changeVideoInPlay(parent.getDirectory());
 			}
 		});
 
@@ -253,19 +199,6 @@ public class ControlPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				skip(SKIP_TIME_MS);
-			}
-		});
-
-		ejectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mediaPlayer.enableOverlay(false);
-				if (JFileChooser.APPROVE_OPTION == fileChooser
-						.showOpenDialog(ControlPanel.this)) {
-					mediaPlayer.playMedia(fileChooser.getSelectedFile()
-							.getAbsolutePath());
-				}
-				mediaPlayer.enableOverlay(true);
 			}
 		});
 	}

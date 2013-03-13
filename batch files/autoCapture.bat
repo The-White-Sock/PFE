@@ -6,6 +6,8 @@ SET interval=%2
 ECHO interval : %interval%
 SET quality=%3
 ECHO quality : %quality%
+SET preview=%4
+ECHO preview : %preview%
 
 SET /a duration*=1000
 SET /a interval*=1000
@@ -15,7 +17,12 @@ ECHO nbFrames : %nbFrames%
 
 SET command="convertjpg %quality%"
 
-RobotEyez /preview /delay 3000 /period %interval% /frames %nbFrames% /command %command% /number_files /bmp
+IF "%preview%"=="true" (
+	RobotEyez /preview /delay 3000 /period %interval% /frames %nbFrames% /command %command% /number_files /bmp
+	ECHO prout
+) ELSE (
+	RobotEyez /delay 3000 /period %interval% /frames %nbFrames% /command %command% /number_files /bmp
+)
 
 PAUSE
 EXIT

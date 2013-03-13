@@ -89,6 +89,7 @@ public class Config extends JFrame implements ActionListener {
 	private String cmd;
 	private String[] commandLine = new String[7];
 	private boolean onWindows;
+	private SuperPlayer superPlayer;
 
 	/**
 	 * Constructeur de la classe Config crée et affiche la fenêtre de
@@ -106,6 +107,8 @@ public class Config extends JFrame implements ActionListener {
 		this.onWindows = onWindows;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		superPlayer = new SuperPlayer();
 
 		// initialisation du fileChooser en fonction de l'OS
 		if (this.onWindows)
@@ -485,22 +488,22 @@ public class Config extends JFrame implements ActionListener {
 						+ commandLine[5] + " " + commandLine[6]);
 			}
 
-			// Exécution de la commande dans un shell
-			try {
-				// Commande Windows
-				if (System.getProperty("os.name").contains("Windows")) {
-					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
-							new File(directory));
-					// Ajout du dossier Video à directory pour le lecteur
-					directory += "\\Video";
-				}
-				// Commande Linux
-				else {
-					Runtime.getRuntime().exec(commandLine, null, null);
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+//			//Exécution de la commande dans un shell
+//			try {
+//				// Commande Windows
+//				if (System.getProperty("os.name").contains("Windows")) {
+//					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
+//							new File(directory));
+//					// Ajout du dossier Video à directory pour le lecteur
+//					directory += "\\Video";
+//				}
+//				// Commande Linux
+//				else {
+//					Runtime.getRuntime().exec(commandLine, null, null);
+//				}
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 
 			System.out.println("Vid directory : " + directory);
 
@@ -508,8 +511,8 @@ public class Config extends JFrame implements ActionListener {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						SuperPlayer playerFrame = new SuperPlayer(directory);
-						playerFrame.setVisible(true);
+						superPlayer.setVisible(true);
+						superPlayer.changeDirectory(directory + "\\Video");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

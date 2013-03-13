@@ -8,19 +8,7 @@ import java.io.File;
  * @author "Joachim ALIBERT & Guillaume GEDEON"
  * 
  */
-public class FilePicker {
-
-	/** File correspondant au dossier dans lequel chercher **/
-	private File directory;
-
-	/**
-	 * Constructeur de la classe FilePicker. Initialize directory.
-	 * 
-	 * @param dirPath
-	 */
-	public FilePicker(String dirPath) {
-		directory = new File(dirPath);
-	}
+public class UtilitiesFiles {
 
 	/**
 	 * Fonction permettant de récupérer la dernière vidéo dans le dossier
@@ -28,8 +16,8 @@ public class FilePicker {
 	 * 
 	 * @return Un string correspondant au chemin absolu vers la vidéo
 	 */
-	public String getLastModifiedVideo() {
-		File[] subfiles = directory.listFiles();
+	public static String getLastModifiedVideo(String dirPath) { 
+		File[] subfiles = (new File(dirPath)).listFiles();
 		String videoPath = null;
 
 		// Dans le cas où il existe des sous-fichiers on récupère la dernière

@@ -4,19 +4,12 @@ import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +17,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
 import uk.co.caprica.vlcj.logger.Logger;
 import uk.co.caprica.vlcj.player.AudioOutput;
 import uk.co.caprica.vlcj.player.MediaDetails;
-import uk.co.caprica.vlcj.player.MediaMeta;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -39,7 +30,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.windows.WindowsCanvas;
-import util.files.FilePicker;
+import util.files.UtilitiesFiles;
 
 /**
  * Simple test harness creates an AWT Window and plays a video.
@@ -64,12 +55,12 @@ public class SuperPlayer extends JFrame {
 
 	private EmbeddedMediaPlayer mediaPlayer;
 
-	private FilePicker filePicker;
+	private String directory;
 
-	private String videoInPlay;
-
-	public SuperPlayer(String directory) {
+	public SuperPlayer() {
 		super("VLCJ Test Player");
+		directory = new String();
+
 		setUndecorated(true);
 		if (RuntimeUtil.isWindows()) {
 			// If running on Windows and you want the mouse/keyboard event
@@ -135,8 +126,6 @@ public class SuperPlayer extends JFrame {
 		mediaPlayer.setEnableKeyInputHandling(false);
 		mediaPlayer.setEnableMouseInputHandling(false);
 
-		filePicker = new FilePicker(directory);
-
 		controlsPanel = new ControlPanel(this);
 
 		setLayout(new BorderLayout());
@@ -155,22 +144,10 @@ public class SuperPlayer extends JFrame {
 					KeyEvent keyEvent = (KeyEvent) event;
 					if (keyEvent.getID() == KeyEvent.KEY_PRESSED) {
 						if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-//							Logger.debug("windowClosing(evt={VK_ESCAPE})");
-
-							if (videoSurface instanceof WindowsCanvas) {
-								((WindowsCanvas) videoSurface).release();
-							}
-
-							if (mediaPlayer != null) {
-								mediaPlayer.release();
-								mediaPlayer = null;
-							}
-
-							if (mediaPlayerFactory != null) {
-								mediaPlayerFactory.release();
-								mediaPlayerFactory = null;
-							}
-							dispose();
+							mediaPlayer.enableOverlay(false);
+							mediaPlayerFactory.release();
+							mediaPlayer.toggleFullScreen();
+							setVisible(false);
 						}
 					}
 				}
@@ -179,38 +156,38 @@ public class SuperPlayer extends JFrame {
 
 		mediaPlayer
 				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
-		// mediaPlayer.toggleFullScreen();
+	}
 
-		/**************************************************************/
-		videoInPlay = filePicker.getLastModifiedVideo();
-		if (videoInPlay != null) {
+	public void changeVideoInPlay(String directory) {
+		mediaPlayer.stop();
+		String videoToPlay = UtilitiesFiles.getLastModifiedVideo(directory);
+		if (videoToPlay != null) {
 			mediaPlayer.enableOverlay(false);
-			mediaPlayer.playMedia(videoInPlay);
+			mediaPlayer.playMedia(videoToPlay);
 			mediaPlayer.enableOverlay(true);
 		} else {
 			JOptionPane.showMessageDialog(this,
 					"Il n'y a pas encore de vidéo disponible",
 					"Vidéo indisponible", JOptionPane.ERROR_MESSAGE);
 		}
-
-		/**************************************************************/
-
 	}
 
 	public EmbeddedMediaPlayer getMediaPlayer() {
 		return mediaPlayer;
 	}
 
-	public String getLastVid() {
-		return filePicker.getLastModifiedVideo();
-	}
-
 	public String getVideoInPlay() {
-		return videoInPlay;
+		return mediaPlayer.mrl();
 	}
 
-	public void setVideoInPlay(String vidPath) {
-		videoInPlay = vidPath;
+	public String getDirectory() {
+		return directory;
+	}
+
+	public void changeDirectory(String directory) {
+		mediaPlayer.toggleFullScreen();
+		this.directory = directory;
+		changeVideoInPlay(directory);
 	}
 
 	private final class SuperPlayerMediaPlayerEventListener extends

@@ -5,8 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
@@ -137,21 +134,6 @@ public class ControlPanel extends JPanel {
 		add(bottomPanel, BorderLayout.SOUTH);
 	}
 
-	/**
-	 * Broken out position setting, handles updating mediaPlayer
-	 */
-	private void setSliderBasedPosition() {
-		if (!mediaPlayer.isSeekable()) {
-			return;
-		}
-		float positionValue = positionSlider.getValue() / 1000.0f;
-		// Avoid end of file freeze-up
-		if (positionValue > 0.99f) {
-			positionValue = 0.99f;
-		}
-		mediaPlayer.setPosition(positionValue);
-	}
-
 	private void updateUIState() {
 		if (!mediaPlayer.isPlaying()) {
 			// Resume play or play a few frames then pause to show current
@@ -194,6 +176,8 @@ public class ControlPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mediaPlayer.stop();
+				positionSlider.setValue(0);
+				timeLabel.setText("hh:mm:ss");
 			}
 		});
 
@@ -207,18 +191,7 @@ public class ControlPanel extends JPanel {
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String video = parent.getLastVid();
-
-				if (video == null) {
-					JOptionPane.showMessageDialog(parent,
-							"Il n'y a pas encore de vidéo disponible",
-							"Vidéo indisponible", JOptionPane.ERROR_MESSAGE);
-				} else {
-					mediaPlayer.enableOverlay(false);
-					mediaPlayer.playMedia(video);
-					mediaPlayer.enableOverlay(true);
-					parent.setVideoInPlay(video);
-				}
+				parent.changeVideoInPlay(parent.getDirectory());
 			}
 		});
 

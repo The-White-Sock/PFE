@@ -4,6 +4,8 @@ import gui.player.SuperPlayer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -21,7 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
- * Fenêtre de configuration de la capture
+ * Fenï¿½tre de configuration de la capture
  * 
  * @author "Joachim ALIBERT & Guillaume GEDEON"
  * 
@@ -91,13 +93,13 @@ public class Config extends JFrame implements ActionListener {
 	private boolean onWindows;
 
 	/**
-	 * Constructeur de la classe Config crée et affiche la fenêtre de
-	 * configuration de la capture. Certaines options différent en fonction de
+	 * Constructeur de la classe Config crï¿½e et affiche la fenï¿½tre de
+	 * configuration de la capture. Certaines options diffï¿½rent en fonction de
 	 * l'os
 	 * 
 	 * @param onWindows
-	 *            boolean permettant de déterminer si le programme est lancé
-	 *            sous Windows. Permet de lancer les commandes correspondantes à
+	 *            boolean permettant de dï¿½terminer si le programme est lancï¿½
+	 *            sous Windows. Permet de lancer les commandes correspondantes ï¿½
 	 *            l'os
 	 */
 	public Config(boolean onWindows) {
@@ -428,7 +430,7 @@ public class Config extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Gestion des événements liés aux boutons
+	 * Gestion des ï¿½vï¿½nements liï¿½s aux boutons
 	 */
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action");
@@ -445,7 +447,7 @@ public class Config extends JFrame implements ActionListener {
 
 		// Lancement de la capture
 		else if (e.getSource() == btnLaunch) {
-			// récupération des différents paramètres
+			// rï¿½cupï¿½ration des diffï¿½rents paramï¿½tres
 			directory = tfDirectory.getText();
 			interSnap = (Integer) spInterSnap.getValue();
 			durTot = (Integer) spDuTotH.getValue() * 3600
@@ -462,14 +464,14 @@ public class Config extends JFrame implements ActionListener {
 					+ (Integer) spDurVidS.getValue();
 			preview = chckbxPreview.isSelected();
 
-			// Création de la commande pour Windows
+			// Crï¿½ation de la commande pour Windows
 			if (onWindows) {
 				cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
 						+ " " + interVid + " " + durCapt + " " + durVid;
 				System.out.println(cmd);
 			}
 
-			// Création de la commande pour Linux
+			// Crï¿½ation de la commande pour Linux
 			else {
 				commandLine[0] = "mainScript.sh";
 				commandLine[1] = String.valueOf(interSnap);
@@ -477,34 +479,25 @@ public class Config extends JFrame implements ActionListener {
 				commandLine[3] = String.valueOf(interVid);
 				commandLine[4] = String.valueOf(durCapt);
 				commandLine[5] = String.valueOf(durVid);
-<<<<<<< HEAD:src/capture/gui/Config.java
 				commandLine[6] = directory;
-=======
-				commandLine[6] = "\"" + directory + "\"";
->>>>>>> 170304069a028c703ed98de58b5d7a20846a16c7:src/gui/capture/Config.java
 				System.out.println("Commande Linux : " + commandLine[0] + " "
 						+ commandLine[1] + " " + commandLine[2] + " "
 						+ commandLine[3] + " " + commandLine[4] + " "
 						+ commandLine[5] + " " + commandLine[6]);
 			}
 
-			// Exécution de la commande dans un shell
+			// Exï¿½cution de la commande dans un shell
 			try {
 				// Commande Windows
 				if (System.getProperty("os.name").contains("Windows")) {
 					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
 							new File(directory));
-<<<<<<< HEAD:src/capture/gui/Config.java
-				} else {
-					Runtime.getRuntime().exec(commandLine, null, new File(directory));
-=======
-					directory += "\\Video"; // Ajout du dossier Video à
-											// directory pour le lecteur
+					directory += "\\Video"; // Ajout du dossier Video ï¿½
+					// directory pour le lecteur
 				}
 				// Commande Linux
 				else {
 					Runtime.getRuntime().exec(commandLine, null, null);
->>>>>>> 170304069a028c703ed98de58b5d7a20846a16c7:src/gui/capture/Config.java
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -512,7 +505,7 @@ public class Config extends JFrame implements ActionListener {
 
 			System.out.println("Vid directory : " + directory);
 
-			// Ouverture de la fenêtre du Player
+			// Ouverture de la fenï¿½tre du Player
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
@@ -525,4 +518,6 @@ public class Config extends JFrame implements ActionListener {
 			});
 		}
 	}
+
+	
 }

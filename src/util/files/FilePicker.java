@@ -3,7 +3,7 @@ package util.files;
 import java.io.File;
 
 /**
- * Classe utilitaire qui permet de récupérer la dernière vidéo dans un dossier
+ * Classe utilitaire qui permet de rï¿½cupï¿½rer la derniï¿½re vidï¿½o dans un dossier
  * 
  * @author "Joachim ALIBERT & Guillaume GEDEON"
  * 
@@ -23,17 +23,17 @@ public class FilePicker {
 	}
 
 	/**
-	 * Fonction permettant de récupérer la dernière vidéo dans le dossier
+	 * Fonction permettant de rÃ©cupÃ©rer la derniï¿½re vidï¿½o dans le dossier
 	 * directory
 	 * 
-	 * @return Un string correspondant au chemin absolu vers la vidéo
+	 * @return Un string correspondant au chemin absolu vers la vidï¿½o
 	 */
 	public String getLastModifiedVideo() {
 		File[] subfiles = directory.listFiles();
 		String videoPath = null;
 
-		// Dans le cas où il existe des sous-fichiers on récupère la dernière
-		if (subfiles != null) {
+		// Dans le cas oï¿½ il existe des sous-fichiers on rï¿½cupï¿½re la derniï¿½re
+		if (subfiles != null && subfiles.length != 0) {
 			File derniereVideo = subfiles[0];
 			for (int i = 0; i < subfiles.length; i++) {
 				File subfile = subfiles[i];

@@ -15,8 +15,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ import util.files.FilePicker;
  * Java7 provides -Dsun.java2d.xrender=True or -Dsun.java2d.xrender=true, might
  * give some general performance improvements in graphics rendering.
  */
-public class SuperPlayer extends JFrame {
+public class SuperPlayer extends JFrame{
 
 	private static final long serialVersionUID = -6281704860617633866L;
 
@@ -166,6 +168,22 @@ public class SuperPlayer extends JFrame {
 					mediaPlayerFactory.release();
 					mediaPlayerFactory = null;
 				}
+				
+				/**
+				 * Arrête les scripts lorsque la fenêtre est fermée
+				 */
+				if (!System.getProperty("os.name").contains("Windows")) {
+
+					try 
+					{
+						Runtime.getRuntime().exec("killScript.sh", null, null);
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+
 			}
 		});
 
@@ -181,7 +199,7 @@ public class SuperPlayer extends JFrame {
 						if (keyEvent.getKeyCode() == KeyEvent.VK_F12) {
 							controlsPanel.setVisible(!controlsPanel.isVisible());
 							getJMenuBar()
-									.setVisible(!getJMenuBar().isVisible());
+							.setVisible(!getJMenuBar().isVisible());
 							invalidate();
 							validate();
 						}
@@ -200,14 +218,16 @@ public class SuperPlayer extends JFrame {
 			mediaPlayer.enableOverlay(true);
 		} else {
 			JOptionPane.showMessageDialog(this,
-					"Il n'y a pas encore de vid�o disponible",
-					"Vid�o indisponible", JOptionPane.ERROR_MESSAGE);
+					"Il n'y a pas encore de vidéo disponible",
+					"Vidéo indisponible", JOptionPane.ERROR_MESSAGE);
 		}
 
 		/**************************************************************/
 
 		mediaPlayer
-				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
+		.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
+		
+		mediaPlayer.toggleFullScreen();
 	}
 
 	public EmbeddedMediaPlayer getMediaPlayer() {
@@ -227,7 +247,7 @@ public class SuperPlayer extends JFrame {
 	}
 
 	private final class SuperPlayerMediaPlayerEventListener extends
-			MediaPlayerEventAdapter {
+	MediaPlayerEventAdapter {
 		@Override
 		public void mediaChanged(MediaPlayer mediaPlayer, libvlc_media_t media,
 				String mrl) {
@@ -398,4 +418,6 @@ public class SuperPlayer extends JFrame {
 			Logger.debug("mouseExited(e={})", e);
 		}
 	}
+
+
 }

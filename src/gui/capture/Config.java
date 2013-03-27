@@ -529,27 +529,37 @@ public class Config extends JFrame implements ActionListener {
 		String errorMessage = "";
 
 		if (directory.equals("")) {
-			errorMessage += "Veuillez spécifier un dossier\n";
+			errorMessage += "Veuillez spécifier un dossier !\n";
 		}
+		
 		if (durTot == 0) {
-			errorMessage += "La durée totale de la capture doit être supérieur à 0\n";
+			errorMessage += "La durée totale de la capture doit être supérieur à 0 !\n";
+		} else if (interSnap > durTot) {
+			errorMessage += "L'intervale entre chaque prise de vue doit être inférieure à la durée totale !\n";
 		}
+		
 		if (interVid == 0) {
-			errorMessage += "L'intervale entre chaque vidéo doit être supérieur à 0\n";
+			errorMessage += "L'intervale entre chaque vidéo doit être supérieur à 0 !\n";
+		} else if (interVid > durTot) {
+			errorMessage += "L'intervale entre chaque vidéo doit être inférieure à la durée totale !\n";
 		}
+		
 		if (durCapt == 0) {
-			errorMessage += "La durée de la capture pour une vidéo doit être supérieur à 0\n";
+			errorMessage += "La durée de la capture pour une vidéo doit être supérieur à 0 !\n";
+		} else if (durCapt > durTot) {
+			errorMessage += "La durée de la capture pour une vidéo doit être inférieure à la durée totale !\n";
 		}
+
 		if (durVid == 0) {
-			errorMessage += "La durée de la vidéo doit être supérieur à 0\n";
+			errorMessage += "La durée de la vidéo doit être supérieur à 0 !\n";
 		} else if (((durCapt / interSnap) / durVid) < 10) {
-			errorMessage += "Le nombre de fps la vidéo sera inférieur à 10 fps."
-					+ "\n    Augmentez la durée de la capture ou diminuez la durée de la vidéo\n";
+			errorMessage += "Le nombre de fps la vidéo sera inférieur à 10 fps !"
+					+ "\n    Augmentez la durée de la capture ou diminuez la durée de la vidéo.\n";
 		}
 
 		if (!errorMessage.equals("")) {
 			JOptionPane.showMessageDialog(this, errorMessage,
-					"Paramètres invalides", JOptionPane.ERROR_MESSAGE);
+					"Paramètres invalides !", JOptionPane.ERROR_MESSAGE);
 			validParameters = false;
 		}
 

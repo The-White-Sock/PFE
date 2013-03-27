@@ -19,7 +19,6 @@ SET command="convertjpg %quality%"
 
 IF "%preview%"=="true" (
 	RobotEyez /preview /delay 3000 /period %interval% /frames %nbFrames% /command %command% /number_files /bmp
-	ECHO prout
 ) ELSE (
 	RobotEyez /delay 3000 /period %interval% /frames %nbFrames% /command %command% /number_files /bmp
 )

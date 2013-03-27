@@ -62,7 +62,7 @@ public class Launcher {
 			if (osArch.equals("x86")) {
 				libPath = "C:\\Program Files\\VideoLAN\\VLC";
 			} else {
-				libPath = "C:\\Program Files (x86)\\VideoLAN\\VLC";
+				libPath = "C:\\Program Files\\VideoLAN\\VLC";//"C:\\Program Files (x86)\\VideoLAN\\VLC";
 			}
 		} else {
 			libPath = "/home/linux/vlc/install/lib";

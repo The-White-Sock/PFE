@@ -37,7 +37,7 @@ MORE +%nbImages% ".\tmp.txt">".\list.txt"
 
 REM On procède à l'encodage
 REM COPY mencoder.exe ".\%dir%\mencoder.exe"
-mencoder mf://@list.txt -mf w=640:h=480:fps=%fps%:type=jpg -ovc copy -oac copy -o ".\Video\%numVid%.avi"
+mencoder mf://@list.txt -mf fps=%fps%:type=jpg -ovc copy -oac copy -o ".\Video\%numVid%.avi"
 REM DEL mencoder.exe
 REM DEL list.txt
 REM CD ..

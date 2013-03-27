@@ -59,11 +59,12 @@ public class Launcher {
 
 		// Configure le chemin d'accès aux librairies de VLC en fonction de l'os
 		if (onWindows) {
-			if (osArch.equals("x86")) {
-				libPath = "C:\\Program Files\\VideoLAN\\VLC";
-			} else {
-				libPath = "C:\\Program Files\\VideoLAN\\VLC";//"C:\\Program Files (x86)\\VideoLAN\\VLC";
-			}
+//			if (osArch.equals("x86")) {
+//				libPath = "C:\\Program Files\\VideoLAN\\VLC";
+//			} else {
+//				libPath = "C:\\Program Files (x86)\\VideoLAN\\VLC";
+//			}
+			libPath = "C:\\Program Files\\VideoLAN\\VLC";
 		} else {
 			libPath = "/home/linux/vlc/install/lib";
 		}

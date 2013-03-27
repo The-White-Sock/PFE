@@ -12,6 +12,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -21,7 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
- * Fen�tre de configuration de la capture
+ * Fenêtre de configuration de la capture
  * 
  * @author "Joachim ALIBERT & Guillaume GEDEON"
  * 
@@ -92,14 +93,14 @@ public class Config extends JFrame implements ActionListener {
 	private SuperPlayer superPlayer;
 
 	/**
-	 * Constructeur de la classe Config cr�e et affiche la fen�tre de
-	 * configuration de la capture. Certaines options diff�rent en fonction de
+	 * Constructeur de la classe Config crée et affiche la fenêtre de
+	 * configuration de la capture. Certaines options différent en fonction de
 	 * l'os
 	 * 
 	 * @param onWindows
-	 *            boolean permettant de d�terminer si le programme est lanc�
-	 *            sous Windows. Permet de lancer les commandes correspondantes �
-	 *            l'os
+	 *            boolean permettant de dï¿½terminer si le programme est lancï¿½
+	 *            sous Windows. Permet de lancer les commandes correspondantes
+	 *            ï¿½ l'os
 	 */
 	public Config(boolean onWindows) {
 		super("Configuration de la capture");
@@ -107,7 +108,7 @@ public class Config extends JFrame implements ActionListener {
 		this.onWindows = onWindows;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		superPlayer = new SuperPlayer();
 
 		// initialisation du fileChooser en fonction de l'OS
@@ -233,7 +234,7 @@ public class Config extends JFrame implements ActionListener {
 				SpringLayout.WEST, spDuTotH);
 		sl_contentPane.putConstraint(SpringLayout.NORTH, spDuTotH, 2,
 				SpringLayout.SOUTH, spInterSnap);
-		spDuTotH.setModel(new SpinnerNumberModel(0, 0, 24, 1));
+		spDuTotH.setModel(new SpinnerNumberModel(9, 0, 24, 1));
 		contentPane.add(spDuTotH);
 
 		lblDurTotH = new JLabel("heure(s)");
@@ -305,7 +306,7 @@ public class Config extends JFrame implements ActionListener {
 				SpringLayout.NORTH, lblInterVid);
 		sl_contentPane.putConstraint(SpringLayout.WEST, spInterVidM, 10,
 				SpringLayout.WEST, spDurTotM);
-		spInterVidM.setModel(new SpinnerNumberModel(0, 0, 60, 1));
+		spInterVidM.setModel(new SpinnerNumberModel(10, 0, 60, 1));
 		contentPane.add(spInterVidM);
 
 		lblInterVidM = new JLabel("minute(s)");
@@ -335,7 +336,7 @@ public class Config extends JFrame implements ActionListener {
 				SpringLayout.NORTH, lblDurCapt);
 		sl_contentPane.putConstraint(SpringLayout.WEST, spDurCaptH, 6,
 				SpringLayout.EAST, lblDurCapt);
-		spDurCaptH.setModel(new SpinnerNumberModel(0, 0, 24, 1));
+		spDurCaptH.setModel(new SpinnerNumberModel(3, 0, 24, 1));
 		contentPane.add(spDurCaptH);
 
 		lblDurCaptH = new JLabel("heure(s)");
@@ -400,7 +401,7 @@ public class Config extends JFrame implements ActionListener {
 				SpringLayout.NORTH, lblDurVid);
 		sl_contentPane.putConstraint(SpringLayout.WEST, spDurVidM, 6,
 				SpringLayout.EAST, lblDurVid);
-		spDurVidM.setModel(new SpinnerNumberModel(0, 0, 60, 1));
+		spDurVidM.setModel(new SpinnerNumberModel(2, 0, 60, 1));
 		contentPane.add(spDurVidM);
 
 		lblDurVidM = new JLabel("minute(s)");
@@ -431,7 +432,7 @@ public class Config extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Gestion des �v�nements li�s aux boutons
+	 * Gestion des ï¿½vï¿½nements liï¿½s aux boutons
 	 */
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action");
@@ -448,7 +449,7 @@ public class Config extends JFrame implements ActionListener {
 
 		// Lancement de la capture
 		else if (e.getSource() == btnLaunch) {
-			// r�cup�ration des diff�rents param�tres
+			// rï¿½cupï¿½ration des diffï¿½rents paramï¿½tres
 			directory = tfDirectory.getText();
 			interSnap = (Integer) spInterSnap.getValue();
 			durTot = (Integer) spDuTotH.getValue() * 3600
@@ -465,61 +466,94 @@ public class Config extends JFrame implements ActionListener {
 					+ (Integer) spDurVidS.getValue();
 			preview = chckbxPreview.isSelected();
 
-			// Création de la commande pour Windows
-			if (onWindows) {
-				cmd = "autoExe " + interSnap + " " + durTot + " " + jpgQuality
-						+ " " + preview + " " + interVid + " " + durCapt + " "
-						+ durVid;
-				System.out.println(cmd);
-			}
-
-			// Création de la commande pour Linux
-			else {
-				commandLine[0] = "mainScript.sh";
-				commandLine[1] = String.valueOf(interSnap);
-				commandLine[2] = String.valueOf(jpgQuality);
-				commandLine[3] = String.valueOf(interVid);
-				commandLine[4] = String.valueOf(durCapt);
-				commandLine[5] = String.valueOf(durVid);
-				commandLine[6] = directory;
-				System.out.println("Commande Linux : " + commandLine[0] + " "
-						+ commandLine[1] + " " + commandLine[2] + " "
-						+ commandLine[3] + " " + commandLine[4] + " "
-						+ commandLine[5] + " " + commandLine[6]);
-			}
-
-			//Exécution de la commande dans un shell
-			try {
-				// Commande Windows
-				if (System.getProperty("os.name").contains("Windows")) {
-					Runtime.getRuntime().exec("cmd.exe /c start " + cmd, null,
-							new File(directory));
-					// Ajout du dossier Video à directory pour le lecteur
-					directory += "\\Video";
+			if (validParameters()) {
+				// CrÃ©ation de la commande pour Windows
+				if (onWindows) {
+					cmd = "autoExe " + interSnap + " " + durTot + " "
+							+ jpgQuality + " " + preview + " " + interVid + " "
+							+ durCapt + " " + durVid;
+					System.out.println(cmd);
 				}
-				// Commande Linux
+
+				// CrÃ©ation de la commande pour Linux
 				else {
-					Runtime.getRuntime().exec(commandLine, null, null);
+					commandLine[0] = "mainScript.sh";
+					commandLine[1] = String.valueOf(interSnap);
+					commandLine[2] = String.valueOf(jpgQuality);
+					commandLine[3] = String.valueOf(interVid);
+					commandLine[4] = String.valueOf(durCapt);
+					commandLine[5] = String.valueOf(durVid);
+					commandLine[6] = directory;
+					System.out.println("Commande Linux : " + commandLine[0]
+							+ " " + commandLine[1] + " " + commandLine[2] + " "
+							+ commandLine[3] + " " + commandLine[4] + " "
+							+ commandLine[5] + " " + commandLine[6]);
 				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 
-			System.out.println("Vid directory : " + directory);
-
-			// Ouverture de la fenêtre du Player
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						superPlayer.setVisible(true);
-						superPlayer.changeDirectory(directory);
-					} catch (Exception e) {
-						e.printStackTrace();
+				// ExÃ©cution de la commande dans un shell
+				try {
+					// Commande Windows
+					if (System.getProperty("os.name").contains("Windows")) {
+						Runtime.getRuntime().exec("cmd.exe /c start " + cmd,
+								null, new File(directory));
+						// Ajout du dossier Video Ã  directory pour le lecteur
+						directory += "\\Video";
 					}
+					// Commande Linux
+					else {
+						Runtime.getRuntime().exec(commandLine, null, null);
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
-			});
+
+				System.out.println("Vid directory : " + directory);
+
+				// Ouverture de la fenÃªtre du Player
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							superPlayer.setVisible(true);
+							superPlayer.changeDirectory(directory);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
 		}
 	}
 
-	
+	private boolean validParameters() {
+		boolean validParameters = true;
+		String errorMessage = "";
+
+		if (directory.equals("")) {
+			errorMessage += "Veuillez spécifier un dossier\n";
+		}
+		if (durTot == 0) {
+			errorMessage += "La durée totale de la capture doit être supérieur à 0\n";
+		}
+		if (interVid == 0) {
+			errorMessage += "L'intervale entre chaque vidéo doit être supérieur à 0\n";
+		}
+		if (durCapt == 0) {
+			errorMessage += "La durée de la capture pour une vidéo doit être supérieur à 0\n";
+		}
+		if (durVid == 0) {
+			errorMessage += "La durée de la vidéo doit être supérieur à 0\n";
+		} else if (((durCapt / interSnap) / durVid) < 10) {
+			errorMessage += "Le nombre de fps la vidéo sera inférieur à 10 fps."
+					+ "\n    Augmentez la durée de la capture ou diminuez la durée de la vidéo\n";
+		}
+
+		if (!errorMessage.equals("")) {
+			JOptionPane.showMessageDialog(this, errorMessage,
+					"Paramètres invalides", JOptionPane.ERROR_MESSAGE);
+			validParameters = false;
+		}
+
+		return validParameters;
+	}
+
 }

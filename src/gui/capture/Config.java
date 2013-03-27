@@ -515,6 +515,8 @@ public class Config extends JFrame implements ActionListener {
 						try {
 							superPlayer.setVisible(true);
 							superPlayer.changeDirectory(directory);
+
+							superPlayer.mediaPlayer.toggleFullScreen();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

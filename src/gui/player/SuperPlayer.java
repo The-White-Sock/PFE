@@ -54,7 +54,7 @@ public class SuperPlayer extends JFrame{
 
 	private MediaPlayerFactory mediaPlayerFactory;
 
-	private EmbeddedMediaPlayer mediaPlayer;
+	public EmbeddedMediaPlayer mediaPlayer;
 
 	private String directory;
 
@@ -75,6 +75,8 @@ public class SuperPlayer extends JFrame{
 
 		videoSurface.setBackground(Color.black);
 		videoSurface.setSize(800, 600); // Only for initial layout
+		
+		this.setExtendedState(this.getExtendedState()|JFrame.MAXIMIZED_BOTH);
 
 		// Since we're mixing lightweight Swing components and heavyweight AWT
 		// components this is probably a good idea
@@ -148,7 +150,10 @@ public class SuperPlayer extends JFrame{
 						if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
 							mediaPlayer.enableOverlay(false);
 							mediaPlayerFactory.release();
-							mediaPlayer.toggleFullScreen();
+							//mediaPlayer.toggleFullScreen();
+							
+							setUndecorated(true);
+							
 							setVisible(false);
 							/**
 							 * Arrête les scripts lorsque la fenêtre est fermée
@@ -174,7 +179,7 @@ public class SuperPlayer extends JFrame{
 				.addMediaPlayerEventListener(new SuperPlayerMediaPlayerEventListener());
 	}
 
-	public void changeVideoInPlay(String directory) {
+	public void changeVideoInPlay(String ehdirectory) {
 		mediaPlayer.stop();
 		String videoToPlay = UtilitiesFiles.getLastModifiedVideo(directory);
 		if (videoToPlay != null) {
